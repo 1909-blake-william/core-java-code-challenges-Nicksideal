@@ -30,7 +30,7 @@ public class EvaluationService {
 		return new String(reversed);
 	}
 
-	/**
+		/**
 	 * 2. Convert a phrase to its acronym. Techies love their TLA (Three Letter
 	 * Acronyms)! Help generate some jargon by writing a program that converts a
 	 * long name like Portable Network Graphics to its acronym (PNG).
@@ -273,9 +273,9 @@ public class EvaluationService {
 		string = string.replace(" ", "");
 		string = string.replace(".", "");
 
-		if (string.length() < 10) {
+		if (string.length() > 10) {
 			throw new IllegalArgumentException();
-		} else if (string.matches("^[0-9]")) {
+		} else if (string.contains("^[0-9]")) {
 			throw new IllegalArgumentException();
 		} else {
 
@@ -413,7 +413,18 @@ public class EvaluationService {
 				for (int j = 0; j < word[i].length(); j++)
 					if (word[i].charAt(j) != 'a' && word[i].charAt(j) != 'e' && word[i].charAt(j) != 'i'
 							&& word[i].charAt(j) != 'o' && word[i].charAt(j) != 'u') {
-
+						if (word[i].charAt(j) == 'q') {
+							String consToRemove = word[i].substring(0, (j + 2));
+							String wordToRebuild = word[i].substring((j + 2), word[i].length());
+							
+							for (int k = 0; k < 1; k++) {
+								pLatin[i] = (wordToRebuild + consToRemove + "ay");
+								cons = false;
+							}
+							if (!cons) {
+								break;
+							}
+						}
 					} else {
 						String consToRemove = word[i].substring(0, j);
 						String wordToRebuild = word[i].substring(j, word[i].length());
@@ -678,12 +689,27 @@ public class EvaluationService {
 		 */
 		public static String encode(String string) {
 			// TODO Write an implementation for this method declaration
-			char[] alphabet = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-					'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-			char[] cypher = new char[alphabet.length];
+			String[] alphabet = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
+					"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+			String[] cypher = new String[alphabet.length];
+			List<Integer> cypherOrd = new ArrayList<Integer>();
 			for (int i1 = alphabet.length - 1, j1 = 0; i1 >= 0; i1--, j1++) {
 				cypher[j1] = alphabet[i1];
 			}
+			//obtain the list of positions
+			for (int word=0; word<string.length();word++) {
+				for(int alph = 0; word<alphabet.length; word++) {
+//					if (string.charAt(word) == alphabet[charAt.(alph)] {
+//						cypherOrd.add(alph);
+//					}
+				}
+			}
+			//build the encoded sentence.
+			String [] encoded = new String[cypherOrd.size()];
+			for(int position =0; position < cypherOrd.size();position++) {
+				encoded[position]=cypher[cypherOrd.get(position)];
+			}
+			//String encWord = encoded[].tostring;
 			return null;
 		}
 
@@ -716,14 +742,69 @@ public class EvaluationService {
 	 * and get:
 	 * 
 	 * (3 * 10 + 5 * 9 + 9 * 8 + 8 * 7 + 2 * 6 + 1 * 5 + 5 * 4 + 0 * 3 + 8 * 2 + 8 *
-	 * 1) mod 11 == 0 Since the result is 0, this proves that our ISBN is valid.
+	 * 1)*Switch* mod 11 == 0 Since the result is 0, this proves that our ISBN is valid.
 	 * 
 	 * @param string
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
 		// TODO Write an implementation for this method declaration
-		return false;
+		
+		string = string.replace(" ", "");
+		string = string.replace("-", "");
+		String [] strArr= string.split("");
+		int[] toSum = new int[string.length()];
+		for (int i=0; i<string.length();i++) {
+			if (Character.isLetter(string.charAt(i))&& string.charAt(i)!='X') {
+				return false;
+			}
+			switch(i) {
+			case 0:
+				toSum[i]+=Integer.parseInt(strArr[i])*10;
+				break;
+			case 1:
+				toSum[i]+=Integer.parseInt(strArr[i])*9;
+				break;
+			case 2:
+				toSum[i]+=Integer.parseInt(strArr[i])*8;
+				break;
+			case 3:
+				toSum[i]+=Integer.parseInt(strArr[i])*7;
+				break;
+			case 4:
+				toSum[i]+=Integer.parseInt(strArr[i])*6;
+				break;
+			case 5:
+				toSum[i]+=Integer.parseInt(strArr[i])*5;
+				break;
+			case 6:
+				toSum[i]+=Integer.parseInt(strArr[i])*4;
+				break;
+			case 7:
+				toSum[i]+=Integer.parseInt(strArr[i])*3;
+				break;
+			case 8:
+				toSum[i]+=Integer.parseInt(strArr[i])*2;
+				break;
+			case 9:
+				if(string.charAt(i)=='X') {
+				toSum[i]+=10;
+				}else {
+					toSum[i]+=Integer.parseInt(strArr[i])*1;
+				}
+				break;
+				
+			}
+			
+		}
+		int sum = IntStream.of(toSum).sum();
+		if(sum%11==0) {
+			return true;
+		}else {
+			return false;
+		}
+		
+		
 	}
 
 	/**
